@@ -2,9 +2,9 @@
  *  内容包括:
  *  顺序储存类型定义
  *  初始化
+ *  增加空间
  *  插入操作
  *  删除操作
- *  增加空间
  *  按值查找
  *  按位查找 
  */
@@ -18,14 +18,14 @@ typedef struct
 {
 	int* data;
 	int MaxSize,length;
-}SqList;
+}SeqList;
 
 // 初始化
-void InitList(SqList &L)
+void InitList(SeqList &L)
 {
 	// 创造空间(默认InitSize大小)
-	//L.data = (int*)malloc(sizeof(int)*InitSize); // C type
-	L.data = new int[InitSize]; // C++ type
+	L.data = (int*)malloc(sizeof(int)*InitSize); // C type
+	// L.data = new int[InitSize]; // C++ type
 	// 默认初始值为0
 	for(int i=0; i<InitSize; i++)
 		L.data[i] = 0;
@@ -35,8 +35,25 @@ void InitList(SqList &L)
 	L.MaxSize = InitSize;
 }
 
+// 增加动态数组的长度
+void IncreaseSize(SeqList &L, int len)
+{
+	// 寄存用的指针
+	int* temp = L.data;
+	// 申请新空间
+	L.data = (int*)malloc(sizeof(int)*(len+L.MaxSize));
+	// 复制数据
+	for(int i=0;i<L.length;i++){
+		L.data[i] = temp[i];
+	}
+	// 增加长度
+	L.MaxSize = L.MaxSize+len;
+	// 释放原内存
+	free(temp);
+}
+
 // 插入操作
-bool ListInsert(SqList &L, int i, int e)
+bool ListInsert(SeqList &L, int i, int e)
 {
 	// 判断i是否有效
 	if(i<1||i>L.length+1){
@@ -62,7 +79,7 @@ bool ListInsert(SqList &L, int i, int e)
 // 删除操作
 // 删除顺序表中第i（ l<=i<=L.length ）个位置的元素，
 // 若成功则返回 true ，否则返回 false
-bool ListDelete(SqList &L, int i)
+bool ListDelete(SeqList &L, int i)
 {
 	// 判断i是否有效
 	if(i<1||i>L.length+1){
@@ -78,25 +95,8 @@ bool ListDelete(SqList &L, int i)
 	return true;
 }
 
-// 增加动态数组的长度
-void IncreaseSize(SqList &L, int len)
-{
-	// 寄存用的指针
-	int* p = L.data;
-	// 申请新空间
-	L.data = (int*)malloc(sizeof(int)*(len+L.MaxSize));
-	// 复制数据
-	for(int i=0;i<L.length;i++){
-		L.data[i] = p[i];
-	}
-	// 增加长度
-	L.MaxSize = L.MaxSize+len;
-	// 释放原内存
-	free(p);
-}
-
 // 按位查找
-int GetItem(SqList L, int i)
+int GetItem(SeqList L, int i)
 {
 	//判断i是否有效
 	if(i<1||i>L.length){
@@ -107,13 +107,13 @@ int GetItem(SqList L, int i)
 }
 
 // 按值查找 - 返回位序(下标+1)
-int LocateElem(SqList &L, int num)
+int LocateElem(SeqList &L, int num)
 {
-	for(int i=0;i<L.length; i++){
-		if(num==L.data[i]){
-			return i+1;
-		}
-	}
+	for(int i=0;i<L.length; i++)
+		// 注意如果比较结构类型不能用==
+		// 但是考试时可以直接写==
+		if(num==L.data[i])
+			return i+1; // 注意返回的是位序(下标+1)
 	return 0;
 }
 
@@ -123,7 +123,7 @@ int main(void)
 	printf("线性表 - 顺序表 - 动态分配\n");
 
 	// 顺序存储 - 动态分配
-	SqList L;
+	SeqList L;
 
 	// 初始化
 	InitList(L);

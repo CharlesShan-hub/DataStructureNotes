@@ -86,11 +86,11 @@ int GetItem(SqList L, int i)
 // 按值查找 - 返回位序(下标+1)
 int LocateElem(SqList &L, int num)
 {
-	for(int i=0;i<L.length; i++){
-		if(num==L.data[i]){
-			return i+1;
-		}
-	}
+	for(int i=0;i<L.length; i++)
+		// 注意如果比较结构类型不能用==
+		// 但是考试时可以直接写==
+		if(num==L.data[i])
+			return i+1; // 注意返回的是位序(下标+1)
 	return 0;
 }
 
