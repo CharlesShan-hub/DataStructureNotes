@@ -410,22 +410,85 @@ bool FindMid1(SqList S1,SqList S2,int &value){
 // a < b, 舍弃a小的一半,b大的一半
 // a > b, 舍弃b小的一半,a大的一半
 // 重复上面三个步骤, 直到a = b或两序列都只含一个元素, 较小者是中位数.
-bool FindMid2(SqList S1, SqList S2, int &value){
-	// 未抄完
+bool FindMid2(SqList A, SqList B, int &value){
+	int s1=0, d1=S1.length-1, m1;
+	int s2=0, d2=S2.length-1, m2;
+	// 分别表示序列A,B的首位数,末位数,中位数
+	while(s1!=d1||s2!=d2){
+		m1=(s1+d1)/2;
+		m2=(s2+d2)/2;
+		// 
+		if(A.data[m1] == B.data[m2]){
+			value = A.data[m1];
+			return true;
+		}
+		// A舍前一半, B舍后一半
+		// eg.
+		// A=[1,2,3,4,5] -> [3,4,5] -> [4,5] -> [4] -> 4
+		// B=[6,7,8]     -> [6,7]   -> [6]   -> [6]
+		if(A.data[m1] < B.data[m2]){
+			// 元素个数为奇数
+			if((s1+d1)%2==0){
+				s1 = m1;
+				d2 = m2;
+			// 元素个数为偶数
+			}else{
+				s1 = m1+1;
+				d2 = m2;
+			}
+		// A舍后一半, B舍前一半
+		}else{
+			// 元素个数为奇数
+			if((s1+d1)%2==0){
+				d1 = m1;
+				s2 = m2;
+			// 元素个数为偶数
+			}else{
+				d1 = m1;
+				s2 = m2+1;
+			}
+		}
+	}
+	value = A.data[s1]<B.data[s2] ? A.data[s1]:B.data[s2];
+	return true;
 }
 
 /* 已知整数序列A=(a0,a1,a2,..,an). 主元素:出现频率大于一半.
  找出主元素, 有返回元素, 无返回-1*/
 int FindMain(SqList L){
-	// 未抄完 - 回寝了
+	if(L.length == 0)
+		return false;
 	// 计数
-
+	int num=L.data[0],count=1,i;
+	for(i=1;i<n;i++){
+		if(count==0){
+			num = L.data[i];
+			count=1;
+		}else if(L.data[i]==num){
+			count++;
+		}else{//L.data[i]!=num
+			count--;
+		}
+	}
 	// 检查
-	return -1;
+	count=0;
+	for(i=0;i<L.length;i++)
+		if(L.data[i]==num)
+			count++;
+	if(count*2>=L.length)
+		return num;
+	else
+		return -1;
 }
 
+/* 给定一个含n(n≥1)个整数的数组, 涉及一个在时间上尽量
+ 可能高效的算法. 找出数组中从未出现的最小正整数. 例如,
+ [-5,3,2,3]->1; [1,2,3]->4 */
+int FindMinInt(SqList L){
+	
+}
 
-/*12 13 14*/
+/*13 14*/
 
 // for test
 int main(void){
