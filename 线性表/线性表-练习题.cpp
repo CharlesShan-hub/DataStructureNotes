@@ -258,29 +258,196 @@ bool Exchange(SqList &L,int m,int n){
 	return true;
 }
 
-/* 9 10 11 12 13 14*/
+/* 线性表(a1,a2,a3, .. an)中的元素递增有序且安顺序储存于计算机内. 设计一个算法
+ 完成用最少时间,在表中查找数值为x的元素,若找到,则将其后继元素位置互换
+ 若找不到, 则将其插入表中并使表中元素仍递增有序*/
+
+// 这是我写的, 但是没有在查找中进行插入
+bool ExchangeOrInsert1(SqList &L, int x){
+	// 合法性
+	if(L.length==0)
+		// 表中没有元素
+		return false;
+	if(L.data[L.length]==x)
+		// 表尾是x
+		return false;
+	// 寻找 - 二分查找
+	int k = L.length/2;
+	int flag = false;
+	int i,j;
+	for(i=0, j=L.length; i<j;){
+		if(L.data[k]==x){
+			// 找到了
+			int temp = L.data[k];
+			L.data[k] = L.data[k+1];
+			L.data[k+1] = temp;
+			flag = true;
+			break;
+		}
+		else if(L.data[k]>x){
+			j = k;
+			k = j/2;
+			if(j/2==0)
+				break;
+		}else{
+			i = k;
+			k += (j-i)/2;
+			if((j-i)/2 == 0)
+				break;
+		}
+	}
+	printf("%d\n",L.data[k]);
+	// 没找到
+	if(flag==false){
+		if(L.length==Maxsize)
+			return false;
+		for(i=L.length;i>k+2;i--){
+			L.data[i] = L.data[i-1];
+		}
+		L.data[k+1] = x;
+		L.length++;
+	}
+	return true;
+}
+
+// 答案, 同样是折半查找,然后插入
+bool ExchangeOrInsert2(SqList &L, int x){
+	int low, high=L.length-1, mid;
+	while(low<=high){
+		mid = (low+high)/2;
+		if(L.data[mid]==x)
+			break;
+		else if(L.data[mid]<x)
+			low=mid+1;
+		else
+			high=mid-1;
+	}
+	if(L.data[mid]==x && mid !=L.length-1){
+		int t = L.data[mid];
+		L.data[mid] = L.data[mid+1];
+		L.data[mid+1] = t;
+	}
+	if(low>high){
+		int i;
+		for(i=L.length-1;i>high;i--)
+			L.data[i+1] = L.data[i];
+		L.data[i+1] = x;
+	}
+	L.length++;
+	return true;
+}
+
+/* 设将n(n>1)个整数存放到一维数组R中, 设计一个在时间
+ 和空间两方面都尽可能高效的算法
+ 将R中保存的序列循环左移p(0<p<n)个位置 */
+bool Rotate(SqList &L,int p){
+	// 123456789
+	// 左移4
+	// 567891234
+	// 步骤
+	// 987654321 - 全部反转
+	// 567891234 - 分段反转
+	// 详见Exchange()
+	// 时间复杂度: O(n)
+	// 空间复杂度: O(1) - 原地算法
+	return true;
+}
+
+/* 一个长度L的升序序列S, 在[L/2]个位置的数称为S的中位数,
+ 例如, S1=(11,13,15,17.19), 中位数是15, 两个序列的中位数是
+ 含他们所欲元素的升序序列的中位数, 例如S2=(2,4,6,8,20),S1,S2的中位数是11
+ 现在又两个等长升序序列A和B. 找中位数*/
+
+// 我的方法
+// 时间复杂度 O(n)
+// 空间复杂度 O(1)
+bool FindMid1(SqList S1,SqList S2,int &value){
+	int total = S1.length + S2.length;
+	if(total==0){
+		return false;
+	}
+	// 寻找中间的 - 两个表可能会有一个读完
+	int i,j,count;
+	count = (total+1)/2;
+	printf("count is %d\n",count);
+	for(i=0,j=0;i<S1.length&&j<S2.length;count--){
+		if (S1.data[i]<=S2.data[j]){
+			value = S1.data[i];
+			i++;
+			printf("%d S1 new value - %d\n",count,value);
+		}
+		else{
+			value = S2.data[j];
+			j++;
+			printf("%d S2 new value - %d\n",count,value);
+		}
+		if(count==0)
+			return true;
+	}
+	// 处理单个表
+	while(i<S1.length){
+		value = S1.data[i];
+		i++;
+		count--;
+		printf("%d S1 new value - %d\n",count,value);
+		if(count == 0)return true;
+	}
+	while(j<S2.length){
+		value = S2.data[j];
+		j++;
+		count--;
+		printf("%d S2 new value - %d\n",count,value);
+		if(count == 0)return true;
+	}
+	return true;
+}
+
+// 答案方法 -  更快
+// 时间复杂度 O(log2n)
+// 空间复杂度 O(1)
+// a, b是中位数. 
+// a = b, a或b是中位数, 结束
+// a < b, 舍弃a小的一半,b大的一半
+// a > b, 舍弃b小的一半,a大的一半
+// 重复上面三个步骤, 直到a = b或两序列都只含一个元素, 较小者是中位数.
+bool FindMid2(SqList S1, SqList S2, int &value){
+	// 未抄完
+}
+
+/* 已知整数序列A=(a0,a1,a2,..,an). 主元素:出现频率大于一半.
+ 找出主元素, 有返回元素, 无返回-1*/
+int FindMain(SqList L){
+	// 未抄完 - 回寝了
+	// 计数
+
+	// 检查
+	return -1;
+}
+
+
+/*12 13 14*/
 
 // for test
 int main(void){
 	SqList A;
 	InitList(A);
-	A.data[0] = 0;
-	A.data[1] = 1;
-	A.data[2] = 2;
-	A.data[3] = 3;
-	A.data[4] = 4;
-	A.data[5] = 5;
-	A.data[6] = 6;
-	A.data[7] = 7;
-	A.data[8] = 8;
-	A.data[9] = 9;
+	A.data[0] = 3;
+	A.data[1] = 4;
+	A.data[2] = 5;
+	A.data[3] = 6;
+	A.data[4] = 7;
+	A.data[5] = 8;
+	A.data[6] = 9;
+	A.data[7] = 10;
+	A.data[8] = 11;
+	A.data[9] = 12;
 	A.length = 10;
 
 	SqList B;
 	InitList(B);
-	B.data[0] = 1;
-	B.data[1] = 2;
-	B.data[2] = 3;
+	B.data[0] = 0;
+	B.data[1] = 1;
+	B.data[2] = 2;
 	B.length = 3;
 
 	SqList C;
@@ -290,13 +457,15 @@ int main(void){
 	C.data[2] = 3;
 	C.length = 3;
 
-	for(int i=0;i<A.length;i++)
-		printf("%d",A.data[i]);
-	printf("\n");
-	Exchange(A,8,2);
-	for(int i=0;i<A.length;i++)
-		printf("%d",A.data[i]);
-	printf("\n");
+	//for(int i=0;i<A.length;i++)
+	//	printf("%d",A.data[i]);
+	//printf("\n");
+	int num;
+	FindMid(A,C,num);
+	printf("%d\n",num);
+	//for(int i=0;i<A.length;i++)
+	//	printf("%d",A.data[i]);
+	//printf("\n");
 }
 
 
