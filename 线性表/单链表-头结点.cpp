@@ -147,6 +147,7 @@ bool ListDelete(LinkList &L, int i)
 // 删除指定结点
 bool DeleteNode(LNode* L)
 {
+	// 用L的下一个节点代替L, 然后释放L的下一个节点
 	if(L==NULL) return false;
 	LNode* p = L->next;
 	if(p==NULL){ // L是最后一个

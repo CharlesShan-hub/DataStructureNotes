@@ -141,6 +141,7 @@ bool ListDelete(LinkList &L, int i)
 }
 
 // 删除指定结点
+// 与带头节点的方法相同
 bool DeleteNode(LNode* L)
 {
 	if(L==NULL) return false;
