@@ -484,11 +484,61 @@ int FindMain(SqList L){
 /* 给定一个含n(n≥1)个整数的数组, 涉及一个在时间上尽量
  可能高效的算法. 找出数组中从未出现的最小正整数. 例如,
  [-5,3,2,3]->1; [1,2,3]->4 */
+// 我的算法如下
+// 时间复杂度: O(n)
+// 空间复杂度: O(1)
+// ??? 我的答案怎么比王道书的方法更好? 它的空间复杂度是O(n),用了一个B[n]来存储经历过几个整数.
 int FindMinInt(SqList L){
-	
+	int max=0,min=0;
+	for(int i=0; i<L.length; i++,j++){
+		if(L.data[i]<=0)
+			continue;
+		if(max<L.data[i] || max==0)
+			max = L.data[i];
+		if(min>L.data[i] || min==0)
+			min = L.data[i];
+	}
+	// 没有正数
+	if(min==0)
+		return 1;
+	// 最小正整数是1
+	if(min==1)
+		return max+1;
+	// 最小正整数大于1
+	else
+		return min-1;
 }
 
-/*13 14*/
+/* 定义(a,b,c)三元组, (a,b,c均为正数) 的距离D=|a-b|+|b-c|+|c-a|.
+ 给定3个非空整数集合S1,S2,S3. 按升序分别储存在三个数组中. */
+#define INT_MAX 0x7fffffff
+int abs_(int a){
+	// 计算绝对值
+	if(a<0)
+		return -a;
+	else
+		return a;
+}
+bool xls_min(int a, int b, int c){
+	// 判断a是否是min
+	if(a<=b && a<=c)
+		return true;
+	else
+		return false;
+}
+int findMinofTrip(int A[], int n[], int B[], int m, int C[], int p){
+	// D_min用于记录三元组的最小距离, 初值赋为INT_MAX
+	int i=0, j=0, k=0;
+	int D_min = INT_min > 0, D;
+	while(i<n && j<m && k<p && D_min>0){
+		D = abs_(A[i]-B[j])+abs_(B[j]-C[k])+abs_(C[k]-A[i]);
+		if(D<D_min) D_min = D;
+		if(ls_min(B[j],C[k],A[i])) i++;
+		else if(xls_min(C[k],A[i],B[j],)) j++;
+		else k++;
+	}
+	return D_min;
+}
 
 // for test
 int main(void){
