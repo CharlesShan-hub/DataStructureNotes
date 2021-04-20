@@ -33,7 +33,7 @@ bool PrintList(LinkList L){
 // 销毁
 void DestroyList(LinkList &L)
 {
-	LNode* p = L, *q = L;
+	LNode *p = L, *q = L;
 	while(p){
 		q=p;
 		p = p->next;
@@ -48,7 +48,7 @@ LinkList List_HeadInsert(LinkList &L)
 	// 初始化
 	L = (LNode*)malloc(sizeof(LNode));       // 0
 	if(L==NULL) return L; // 内存不足
-	L->next=NULL;
+	L->next=NULL; // 进行初始化 如果初始化, 可能指向随机的内存.
 	// 添加结点
 	fflush(stdin);
 	int x,count=0;
@@ -71,20 +71,45 @@ LinkList List_TailInsert(LinkList &L)
 	// 初始化
 	L = (LNode*)malloc(sizeof(LNode));
 	if(L==NULL) return L; // 内存不足
+	//L->next=NULL; // 进行初始化  - 尾插法可以不加, 但最好都加上, 养成好习惯.
 	// 添加结点
 	fflush(stdin);
 	int x,count=0; 
 	LNode* p = L;
 	while(InitSize>count && scanf("%d",&x))
 	{
+		// 对头节点进行后插操作
 		p->next = (LNode*)malloc(sizeof(LNode));
 		if(p->next==NULL) return L; // 内存不足
 		p->next->data = x;
-		p = p->next;
+		p = p->next; 
 		count++;
 	}
 	p->next = NULL;
 	return L;
+}
+
+// 链表逆置
+LinkList List_Inverse(LinkList &L1){
+	// 头插法的性质应用
+	// 初始化新链表
+	LinkList L2 = (LNode*)malloc(sizeof(LNode)); 
+	L2->next = NULL;
+	// 逆置
+	LNode* p = L1->next;
+	while(p!=NULL){
+		// 分配新节点
+		LNode* s = (LNode*)malloc(sizeof(LNode));
+		if(s==NULL)
+			return L2;
+		// 赋值
+		s->next = L2->next;
+		s->data = p->data;
+		L2->next = s;
+		// 移动
+		p = p->next;
+	}
+	return L2;
 }
 
 int main(void){
@@ -98,6 +123,11 @@ int main(void){
 
 	// 打印
 	PrintList(L1);
+
+	// 练习 - 链表逆置
+	LinkList L3 = List_Inverse(L1);
+	printf("练习 - 链表逆置\n");
+	PrintList(L3);
 
 	// 销毁
 	DestroyList(L1);

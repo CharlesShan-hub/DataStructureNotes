@@ -68,7 +68,7 @@ LNode* LocateElem(LinkList L, int e)
 	LNode* p = L->next;
 	while(p && p->data!=e)
 		p = p->next;
-	return p;
+	return p;// 找到后返回该节点指针, 否则返回NULL
 }
 
 // 后插操作
@@ -129,12 +129,17 @@ bool ListInsert(LinkList &L, int i, int e)
 // 删除操作
 bool ListDelete(LinkList &L, int i)
 { 
+	// i合法性判断
+	if(i<1) return false;
 	// 找到i-1个结点
+	LNode* p =  (L,i-1);
+	/*
 	LNode* p = L;
 	int count=0;
 	while(p!=NULL && count<i-1){
 		p = p->next;count++;
 	}
+	*/
 	if(p==NULL) return false;
 	if(p->next==NULL) return false; // p的后继没有后继
 	// 删除这个结点
