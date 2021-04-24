@@ -289,6 +289,70 @@ bool FindSharedNode(LinkList L1, LinkList L2, LNode* public_){
 	return true;
 }
 
+// 第九题
+/* 给定一个带表头节点的单链表, 设head为头节点, 节点结构为(data, next), data
+ 为整形元素, next为指针, 试写出算法: 按递增次序输出单链表个节点的数据元素, 并释放
+ 节点所占空间(要求: 不允许使用数组作为辅助空间)*/
+bool DeleteAllMax(LinkList &L){
+	if(L->next == NULL)
+		return false;
+	LNode *q, *p = L;
+	LNode *s,*d; //s - save(保存下来最大点前边的那个节点), d - delete(要删除的节点)
+	int max;
+	while(p->next!=NULL){
+		q = L;
+		max = p->next->data;
+		s = q;
+		// 找到max
+		while(q->next!=NULL){
+			if(p->next->data > max){
+				s = q;
+				max = p->next->data;
+			}
+			q = q->next;
+		}
+		// 删除s
+		d = s->next;
+		printf("%d ", d->data);
+		s->next = s->next->next;
+		free(d);
+	}
+	printf("\n");
+	return true;
+}
+
+// 第十题
+/* 讲一个带有头节点的单链表A分解为两个带有头节点的单链表A,B.
+ 使得A中含有元表中的序号为偶数的元素, B是奇数的部分, 且保持其相对顺序不变. */
+bool DivideToTwo(LinkList L, LinkList &Lo, LinkList &Le){
+	if(L->next==NULL)
+		return false;
+	LNode *p,*s;
+	int count;
+	LinkList q1=Lo,q2=Le;
+
+	for(p=L,count=1;p->next!=NULL;count++,p=p->next){
+		if(count%2==1){
+			// 奇数
+			s = (LNode*)malloc(sizeof(LNode));
+			if(s==NULL)return false;
+			s->data = p->next->data;
+			s->next = NULL;
+			q1->next = s;
+			q1 = q1->next;
+		}else{
+			// 偶数
+			s = (LNode*)malloc(sizeof(LNode));
+			if(s==NULL)return false;
+			s->data = p->next->data;
+			s->next = NULL;
+			q2->next = s;
+			q2 = q2->next;
+		}
+	}
+	return true;
+}
+
 int main(){
 
 	// 第一题
@@ -377,9 +441,27 @@ int main(){
 	InitListNH(L9);
 	GenerateList(L9);
 	PrintList(L9);
-	DeleteInXY(L9,3,7);
+	DeleteAllMax(L9);
 	PrintList(L9);
 	DeleteNode(L9,false);
+
+	// 第十题
+	printf("\n第十题\n");
+	LinkList L10;
+	InitListNH(L10);
+	LinkList L10_1;
+	InitListNH(L10_1);
+	LinkList L10_2;
+	InitListNH(L10_2);
+	GenerateList(L10);
+	PrintList(L10);
+	DivideToTwo(L10,L10_1,L10_2);
+	PrintList(L10);
+	PrintList(L10_1);
+	PrintList(L10_2);
+	DeleteNode(L10,false);
+	DeleteNode(L10_1,false);
+	DeleteNode(L10_2,false);
 
 	return 0;
 }
