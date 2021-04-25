@@ -857,6 +857,149 @@ bool RDeleteAllMax(RLinkList &L){
 	return true;
 }
 
+// 第20题
+/* 设头指针为L的带有表头节点的非循环双向链表, 其每个节点中除有pred(前驱),data(数据),next(后继)
+ 还有一个频度域freq. 在链表被启用前, 其值初始化为0. 链表中进行一次Locate(L,x)运算时,
+ 另元素职位x的节点中freq域的值+1. 并使此链表中节点保持按访问频度递减顺序排列. 
+ 同时最近访问的节点排在频度相同的节点前边. 编写符合要求的Loacte(L,x), 返回找到的节点地址,类型为指针.*/
+typedef struct LNode20
+{
+	int data;
+	int freq;
+	LNode20* pred;
+	LNode20* next;
+}*LinkList20,LNode20;
+
+bool InitLinkList20(LinkList20 &L){
+	L = (LNode20*)malloc(sizeof(LNode20));
+	if(L==NULL) return false;
+	L->next = NULL;
+	L->pred = NULL;
+	//L->data = 0;
+	//L->freq = 0;
+	return true;
+}
+
+bool GenerateList20(LinkList20 &L, int from, int to, int step){
+	if(from==to || step<=0)return false;
+	int i = from;
+	LNode20 *s;
+	while(1){
+		// 判断条件
+		if(from < to){
+			if(i>=to)
+				break;
+		}
+		else{
+			if(i<=to)
+				break;
+		}
+		// 创造节点s
+		s = (LNode20*)malloc(sizeof(LNode20));
+		if(s==NULL)return false;
+		s->data = i;
+		s->freq = 0;
+		s->next = L->next;
+		s->pred = L;
+		// 添加节点
+		if(s->next!=NULL)
+			s->next->pred = s;
+		s->pred->next = s;
+		// 迭代
+		if(from < to)
+			i += step;
+		else
+			i -= step;
+	}
+	return true;
+}
+
+bool PrintList20(LinkList20 L){
+	LNode20 *p = L;
+	while(p->next!=NULL){
+		printf("%d(%d) ",p->next->data,p->next->freq);
+		p = p->next;
+	}
+	printf("\n");
+	return true;
+}
+
+bool Destroy20(LinkList20 &L){
+	LNode20 *s;
+	while(L->next!=NULL){
+		s = L->next;
+		L->next = s->next;
+		free(s);
+	}
+	free(L);
+	return true;
+}
+
+LNode20* Locate(LinkList20 &L, int x){
+	LNode20 *p=L;
+	LNode20 *s;
+	// 首先找到寻找的节点 data = x
+	while(p->next!=NULL){
+		if(p->next->data == x){
+			s = p->next;
+			break;
+		}else{
+			p = p->next;
+		}
+	}
+	// 进行频度调整
+	s->freq += 1;
+	p = s;
+	if(L->next == s){
+		printf("已经在开头");
+		return s;
+	}
+	L->freq = s->freq+1;
+	while(p!=L){
+		if(p->pred->freq > s->freq){
+			// 先把原来的s摘下来
+			if(s->next!=NULL)
+				s->next->pred = s->pred;
+			s->pred->next = s->next;
+			// 再把s放到算好的位置
+			s->next = p;
+			s->pred = p->pred;
+			s->next->pred = s;
+			s->pred->next = s;
+			break;
+		}
+		p = p->pred;
+	}
+	L->freq = 0;
+	return s;
+}
+
+// 第21题
+/* 已知一个带有表头节点的单链表, 节点结构为[data,link]
+ 假设该链表只给出了头指针list, 在不改变链表的前提下,
+ 请设计一个尽可能高效的算法, 查找链表中倒数第k个位置上的节点(k为正整数).
+ 查找成功, 算法输出该节点的data域值, 并返回1, 失败返回0 */
+// 下面是答案方法!!! - 最优解法
+// 给定p,q初始值都是L
+// p向右移动k
+// q,p一起移动直到p到头, q就是-k
+int LocateInverseK(LinkList L,int k){
+	if(L->next==NULL || k<=0)return 0;
+	LNode *p=L,*q=L;
+	for(int i=1;i<k;i++){
+		if(p->next==NULL)return 0;
+		p = p->next;
+	}
+	while(p->next!=NULL){
+		p = p->next;
+		q = q->next;
+	}
+	printf("The -%d_th is %d\n",k,q->data);
+	return 1;
+}
+
+// 第22题
+/*  */
 
 int main(){
 
@@ -1110,6 +1253,26 @@ int main(){
 
 	// 第20题
 	printf("\n\n第20题\n");
+	LinkList20 L20;
+	InitLinkList20(L20);
+	GenerateList20(L20,1,20,2);
+	PrintList20(L20);
+	printf("Find - %d\n",Locate(L20,5)->data);
+	PrintList20(L20);
+	printf("Find - %d\n",Locate(L20,5)->data);
+	PrintList20(L20);
+	printf("Find - %d\n",Locate(L20,7)->data);
+	PrintList20(L20);
+	Destroy20(L20);
+
+	// 第21题
+	printf("\n\n第21题\n");
+	LinkList L21;
+	InitListNH(L21);
+	GenerateList(L21);
+	PrintList(L21);
+	LocateInverseK(L21,3);
+	DeleteNode(L21,false);
 
 	return 0;
 }
