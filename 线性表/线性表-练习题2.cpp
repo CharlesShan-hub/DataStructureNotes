@@ -44,6 +44,26 @@ bool GenerateList(LinkList &L){
 	return true;
 }
 
+// 本函数为了测试功能 - 采取节点后插入(从小到大)
+bool GenerateList2(LinkList &L,int from, int to){
+	LNode *p = L;
+	if(from>=to){
+		printf("Wrong!");
+		return false;
+	}
+	//for(int i=0;i<11;i++){
+	for(int i=from;i<to;i++){
+		LNode *s = (LNode*)malloc(sizeof(LNode));
+		if(!s)
+			return false;
+		s->next=NULL;
+		s->data = i;
+		p->next = s;
+		p = p->next;
+	}
+	return true;
+}
+
 // 输出操作本函数为了测试功能
 bool PrintList(LinkList L){
 	printf("PrintList: ");
@@ -353,6 +373,250 @@ bool DivideToTwo(LinkList L, LinkList &Lo, LinkList &Le){
 	return true;
 }
 
+// 第11题
+/* 设C={a1,b1,a2,b2,...an,bn}为线性表, 采用带头节点的hc单链表存放, 设计一个就地算法
+ 将其拆分为两个链表, A={a1,b2,c1,...} B={bn,...,b2,b1} */
+bool DivideToTwoInverse(LinkList L, LinkList &Lo, LinkList &Le){
+	if(L->next==NULL)
+		return false;
+	// 用来存放生成两个新链表
+	LNode *p1=Lo,*p2=Le;
+	// 用于生成新节点
+	LNode *s;
+	// 用于遍历老表
+	LNode *q=L;
+	int count = 1;
+	while(q->next!=NULL){
+		if(count%2 == 0){
+			// 偶数 - 头插
+			s = (LNode*)malloc(sizeof(LNode));
+			if(s==NULL)
+				return false;
+			s->next = p2->next;
+			s->data = q->next->data;
+
+			p2->next = s;
+		}else{
+			// 奇数 - 尾插
+			s = (LNode*)malloc(sizeof(LNode));
+			if(s==NULL)
+				return false;
+			s->next = NULL;
+			s->data = q->next->data;
+
+			p1->next = s;
+			p1 = p1->next;
+		}
+		q = q->next;
+		count++;
+	}
+
+	return true;
+}
+
+// 第12题
+/*有序递增单链表, 有数值相同的元素存在, 若储存方式为单链表, 设计算法去掉数值相同的元素,
+ 是表中不再有重复的元素, 例如(7,10,10,21,30,43,43,43,51,70)->(7,10,21,30,42,51,70)*/
+bool DeleteDouble(LinkList &L){
+	if(L->next==NULL)
+		return false;
+	LNode* p=L,*s;
+	while(p->next!=NULL){
+		if(p->next->next==NULL)
+			break;
+		if(p->next->data == p->next->next->data){
+			s = p->next;
+			p->next = s->next;
+			free(s);
+		}
+		p = p->next;
+	}
+	return true;
+}
+
+// 第13题
+/* 假设有两个按元素递增次序排列的单链表, 编写算法, 将两个单链表归并成
+ 递减的单链表. 并要求利用原来的两个单链表的节点存放归并后的单链表. */
+bool MergeAndReverse(LinkList &L1, LinkList &L2){
+	// 123456
+	// 23456789
+	if(L1->next==NULL||L2->next==NULL)
+		return false;
+	LNode *p = L1;
+	LNode *q = L2;
+	LNode *s = (LNode*)malloc(sizeof(LNode));
+	LNode *t;
+	if(s==NULL)return false;
+	s->next=NULL;
+	
+	// 两个表都有内容
+	while(p->next!=NULL && q->next!=NULL){
+		if(p->next->data <= q->next->data){
+			printf("%d ",p->next->data);
+			// 将节点释放出来 保存为t(temp)
+			t = p->next;
+			p->next = t->next;
+			// 把t插到s中
+			t->next = s->next;
+			s->next = t;
+		}else{
+			printf("%d ",q->next->data);
+			// 将节点释放出来 保存为t(temp)
+			t = q->next;
+			q->next = t->next;
+			// 把t插到s中
+			t->next = s->next;
+			s->next = t;
+		}
+	}
+	// 某一个表有剩余
+	while(p->next!=NULL){
+		printf("%d ",p->next->data);
+		// 将节点释放出来 保存为t(temp)
+		t = p->next;
+		p->next = t->next;
+		// 把t插到s中
+		t->next = s->next;
+		s->next = t;
+	}
+	while(q->next!=NULL){
+		printf("%d ",q->next->data);
+		// 将节点释放出来 保存为t(temp)
+		t = q->next;
+		q->next = t->next;
+		// 把t插到s中
+		t->next = s->next;
+		s->next = t;
+	}
+
+	L1->next = s->next;
+	L2->next = s->next;
+	printf("\n");
+	free(s);
+	return true;
+}
+
+// 第14题
+/* 两个带头节点的递增单链表, 设计算法用公共元素生成L, 不能破坏原链表*/
+bool MergeSame(LinkList A, LinkList B, LinkList &L){
+	if(A->next==NULL || B->next==NULL || L->next!=NULL)
+		return false;
+	LNode* p=A,*q=B,*s;
+	int last=-1;
+	while(q->next!=NULL && p->next!=NULL){
+		if(p->next->data < q->next->data){
+			if(last==p->next->data){
+				s = (LNode*)malloc(sizeof(LNode));
+				if(s==NULL)return false;
+				s->next = L->next;
+				s->data = p->next->data;
+				L->next = s;
+			}
+			last = p->next->data;
+			p = p->next;
+		}else{
+			if(last==q->next->data){
+				s = (LNode*)malloc(sizeof(LNode));
+				if(s==NULL)return false;
+				s->next = L->next;
+				s->data = q->next->data;
+				L->next = s;
+			}
+			last = q->next->data;
+			q = q->next;
+		}
+	}
+	while(q->next!=NULL){
+		if(last==q->next->data){
+			LNode *s = (LNode*)malloc(sizeof(LNode));
+			if(s==NULL)return false;
+			s->next = L->next;
+			s->data = q->next->data;
+			L->next = s;
+		}
+		last = q->next->data;
+		q = q->next;
+	}
+	while(p->next!=NULL){
+		if(last==p->next->data){
+			LNode *s = (LNode*)malloc(sizeof(LNode));
+			if(s==NULL)return false;
+			s->next = L->next;
+			s->data = p->next->data;
+			L->next = s;
+		}
+		last = p->next->data;
+		p = p->next;
+	}
+	return true;
+}
+
+// 第15题
+/* 两个带头节点的递增单链表, 设计算法用AB交集生成L, 并安放于A*/
+bool MergeSameToA(LinkList &A, LinkList B){
+	if(A->next==NULL || B->next==NULL)
+		return false;
+
+	LNode *p=A, *q=B, *s;
+	int last;
+	if(A->next->data < B->next->data)
+		last = A->next->data-1;
+	else
+		last = B->next->data-1;
+
+	// 3 4
+	// 3 4
+	while(p->next!=NULL && q->next!=NULL){
+		if(p->next->data < q->next->data){
+			if(last != p->next->data){
+				last = p->next->data;
+				s = p->next;
+				p->next = s->next;
+				free(s);
+			}else{
+				last = p->next->data;
+				p = p->next;
+			}
+		}
+		else{
+			if(last == q->next->data){
+				s = (LNode*)malloc(sizeof(LNode));
+				if(s==NULL)return false;
+				s->next = NULL;
+				s->data = q->next->data;
+				p->next = s;
+				p = p->next;
+			}else
+				last = q->next->data;
+			q = q->next;
+		}
+	}
+
+	while(p->next!=NULL){
+		if(last != p->next->data){
+			last = p->next->data;
+			s = p->next;
+			p->next = s->next;
+			free(s);
+		}else{
+			last = p->next->data;
+			p = p->next;
+		}
+	}
+	while(q->next!=NULL){
+		if(last == q->next->data){
+			s = (LNode*)malloc(sizeof(LNode));
+			if(s==NULL)return false;
+			s->next = NULL;
+			s->data = q->next->data;
+			p->next = s;
+			p = p->next;
+		}else
+			last = q->next->data;
+		q = q->next;
+	}
+	return true;
+}
 int main(){
 
 	// 第一题
@@ -463,6 +727,84 @@ int main(){
 	DeleteNode(L10_1,false);
 	DeleteNode(L10_2,false);
 
+	// 第11题
+	printf("\n第十一题\n");
+	LinkList L11;
+	InitListNH(L11);
+	LinkList L11_1;
+	InitListNH(L11_1);
+	LinkList L11_2;
+	InitListNH(L11_2);
+	GenerateList(L11);
+	PrintList(L11);
+	DivideToTwoInverse(L11,L11_1,L11_2);
+	PrintList(L11);
+	PrintList(L11_1);
+	PrintList(L11_2);
+	DeleteNode(L11,false);
+	DeleteNode(L11_1,false);
+	DeleteNode(L11_2,false);
+
+	// 第12题
+	printf("\n\n第12题\n");
+	LinkList L12;
+	InitListNH(L12);
+	GenerateList(L12);
+	L12->next->next->data = L12->next->data;
+	PrintList(L12);
+	DeleteDouble(L12);
+	PrintList(L12);
+	DeleteNode(L12,false);
+
+	// 第13题
+	printf("\n\n第13题\n");
+	LinkList L13_1;
+	InitListNH(L13_1);
+	GenerateList2(L13_1,1,10);
+	PrintList(L13_1);
+	LinkList L13_2;
+	InitListNH(L13_2);
+	GenerateList2(L13_2,5,15);
+	PrintList(L13_2);
+	MergeAndReverse(L13_1,L13_2);
+	PrintList(L13_1);
+	DeleteNode(L13_1,false);
+	//DeleteNode(L13_2,false);
+
+	// 第14题
+	printf("\n\n第14题\n");
+	LinkList L14_1;
+	InitListNH(L14_1);
+	GenerateList2(L14_1,1,10);
+	PrintList(L14_1);
+	LinkList L14_2;
+	InitListNH(L14_2);
+	GenerateList2(L14_2,5,15);
+	PrintList(L14_2);
+	LinkList L14_3;
+	InitListNH(L14_3);
+	MergeSame(L14_1,L14_2,L14_3);
+	PrintList(L14_3);
+	DeleteNode(L14_1,false);
+	DeleteNode(L14_2,false);
+	DeleteNode(L14_3,false);
+
+	// 第15题
+	printf("\n\n第15题\n");
+	LinkList L15_1;
+	InitListNH(L15_1);
+	GenerateList2(L15_1,5,15);
+	PrintList(L15_1);
+	LinkList L15_2;
+	InitListNH(L15_2);
+	GenerateList2(L15_2,1,10);
+	PrintList(L15_2);
+	MergeSameToA(L15_1,L15_2);
+	PrintList(L15_1);
+	DeleteNode(L15_1,false);
+	DeleteNode(L15_2,false);
+
+	// 第16题
 	return 0;
 }
 
