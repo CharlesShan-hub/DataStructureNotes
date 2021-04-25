@@ -12,6 +12,11 @@ typedef struct RDLNode{ // rotate double LNode
 	struct RDLNode *next,*last;
 }RDLNode,*RDLinkList;
 
+typedef struct RLNode{ // 循环单链表
+	int data;
+	struct RLNode *next;
+}RLNode,*RLinkList;
+
 // 不带头节点
 bool InitListNH(LinkList &L){ // NH - none head
 	L = (LNode*)malloc(sizeof(LNode));
@@ -102,6 +107,23 @@ bool RDPrintList(RDLinkList L){
 	return true;
 }
 
+bool RPrintList(RLinkList L){
+	printf("PrintList: ");
+	RLNode* p = L;
+	// 空
+	if(p->next==L){
+		printf("\n");
+		return false;
+	}
+	// 打印
+	while(p->next!=L){
+		printf("%d ",p->next->data);
+		p = p->next;
+	}
+	printf("\n");
+	return true;
+}
+
 // 循环双链表的初始化
 bool RDInitListH(RDLinkList &L){
 	// 头节点
@@ -109,6 +131,15 @@ bool RDInitListH(RDLinkList &L){
 	if(L==NULL)return false;
 	L->next = L;
 	L->last = L;
+	return true;
+}
+
+// 循环单链表的初始化
+bool RInitListH(RLinkList &L){
+	// 头节点
+	L = (RLNode*)malloc(sizeof(RLNode));
+	if(L==NULL)return false;
+	L->next = L;
 	return true;
 }
 
@@ -156,6 +187,26 @@ bool RDGenerateList2(RDLinkList &L,int from, int to){
 	return true;
 }
 
+// 本函数为了测试功能 - 采取节点后插入(从小到大)
+bool RGenerateList(RLinkList &L,int from, int to){
+	RLNode *p = L;
+	if(from>=to){
+		printf("Wrong!");
+		return false;
+	}
+	for(int i=to;i>from;i--){
+		// 创造节点s
+		RLNode *s = (RLNode*)malloc(sizeof(RLNode));
+		if(!s)
+			return false;
+		s->next=L->next;
+		s->data = i-1;
+		// s插入
+		p->next=s;
+	}
+	return true;
+}
+
 // 第一题
 /* 设计一个递归算法, 删除不带头节点, 并释放其空间, 
  假设值为x的节点不唯一 */
@@ -177,6 +228,16 @@ bool DeleteNode(LinkList &L,bool log){
 // 删除循环双链表
 bool RDDelete(RDLinkList &L){
 	RDLNode *s;
+	while(L->next!=L){
+		s = L->next;
+		L->next = s->next;
+		free(s);
+	}
+	return true;
+}
+
+bool RDelete(RLinkList &L){
+	RLNode *s;
 	while(L->next!=L){
 		s = L->next;
 		L->next = s->next;
@@ -742,8 +803,60 @@ bool IsSymmetry(RDLinkList L){
 }
 
 // 第18题
-/* 两个循环单链表, 链表透支真难分别为h1,h2, 编写函数将链表2连接到链表h1之后, 
+/* 两个循环单链表, 链表头指针分别为h1,h2, 编写函数将链表2连接到链表h1之后, 
  要求连接后的链表人保持循环链表的形式 */
+bool RMerge(RLinkList &h1, RLinkList &h2){
+	RLNode *q = h1;
+	RLNode *p = h2;
+	RLNode *s=NULL;
+	// 找到h1最后一项
+	while(q->next!=h1)
+		q = q->next;
+	q->next = h2->next;
+	// 把h2连进去
+	while(p->next!=h2)
+		p = p->next;
+	p->next = h1;
+	free(h2);
+	return true;
+}
+
+// 第19题
+/* 设有一个带头节点的循环单链表, 其节点值均为正整数, 设计一个算法, 反
+ 复找出单链表中的节点值最小的节点并输出. 然后将该节点从中删除. 直到单链表空为止. 
+ 在删除表头节点.*/
+bool RDeleteAllMax(RLinkList &L){
+	if(L->next == L)
+		return false;
+	RLNode *p=L;
+	RLNode *s=L;
+	RLNode *d=L;
+	int max_ = L->next->data;
+	// 不停地删除
+	while(L->next!=L){
+		// 初始化
+		p=L;
+		s=L;
+		max_ = L->next->data;
+		// 找到最大节点
+		while(p->next!=L){
+			if(p->next->data >= max_){
+				s = p;
+				max_ = p->next->data;
+			}
+			p = p->next;
+		}
+		// 删除最大节点
+		d = s->next;
+		s->next = d->next;
+		printf("%d ",d->data);
+		free(d);
+	}
+	// 删除头节点
+	free(L);
+	return true;
+}
+
 
 int main(){
 
@@ -970,6 +1083,33 @@ int main(){
 	printf("Is Symmetry? - %d\n",IsSymmetry(L17_3));
 	RDDelete(L17_3);
 
+	// 第18题
+	printf("\n\n第18题\n");
+	RLinkList L18_1;
+	RInitListH(L18_1);
+	RGenerateList(L18_1,1,6); 
+	RPrintList(L18_1);
+	RLinkList L18_2;
+	RInitListH(L18_2);
+	RGenerateList(L18_2,10,15); 
+	RPrintList(L18_2); 
+	RMerge(L18_1,L18_2);
+	RPrintList(L18_1);
+	RDelete(L18_1);
+
+	// 第19题
+	printf("\n\n第19题\n");
+	RLinkList L19;
+	RInitListH(L19);
+	RGenerateList(L19,4,8); 
+	RGenerateList(L19,1,6); 
+	RGenerateList(L19,3,9); 
+	RPrintList(L19);
+	RDeleteAllMax(L19);
+	//RDelete(L19);
+
+	// 第20题
+	printf("\n\n第20题\n");
 
 	return 0;
 }
