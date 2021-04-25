@@ -7,8 +7,13 @@ typedef struct LNode{
 	struct LNode *next;
 }LNode,*LinkList;
 
+typedef struct RDLNode{ // rotate double LNode
+	int data;
+	struct RDLNode *next,*last;
+}RDLNode,*RDLinkList;
+
 // 不带头节点
-bool InitListNH(LinkList &L){
+bool InitListNH(LinkList &L){ // NH - none head
 	L = (LNode*)malloc(sizeof(LNode));
 	if(!L)
 		return false;
@@ -80,6 +85,77 @@ bool PrintList(LinkList L){
 	return true;
 }
 
+bool RDPrintList(RDLinkList L){
+	printf("PrintList: ");
+	RDLNode* p = L;
+	// 空
+	if(p->next==L){
+		printf("\n");
+		return false;
+	}
+	// 打印
+	while(p->next!=L){
+		printf("%d ",p->next->data);
+		p = p->next;
+	}
+	printf("\n");
+	return true;
+}
+
+// 循环双链表的初始化
+bool RDInitListH(RDLinkList &L){
+	// 头节点
+	L = (RDLNode*)malloc(sizeof(RDLNode));
+	if(L==NULL)return false;
+	L->next = L;
+	L->last = L;
+	return true;
+}
+
+// 本函数为了测试功能 - 采取节点后插入(从小到大)
+bool RDGenerateList(RDLinkList &L,int from, int to){
+	RDLNode *p = L;
+	if(from>=to){
+		printf("Wrong!");
+		return false;
+	}
+	for(int i=to;i>from;i--){
+		// 创造节点s
+		RDLNode *s = (RDLNode*)malloc(sizeof(RDLNode));
+		if(!s)
+			return false;
+		s->next=L->next;
+		s->data = i-1;
+		s->last=L;
+		// s插入
+		s->next->last = s;
+		p->next=s;
+	}
+	return true;
+}
+
+// 本函数为了测试功能 - 采取节点后插入(从大到小)
+bool RDGenerateList2(RDLinkList &L,int from, int to){
+	RDLNode *p = L;
+	if(from<=to){
+		printf("Wrong!");
+		return false;
+	}
+	for(int i=to;i<from;i++){
+		// 创造节点s
+		RDLNode *s = (RDLNode*)malloc(sizeof(RDLNode));
+		if(!s)
+			return false;
+		s->next=L->next;
+		s->data = i+1;
+		s->last=L;
+		// s插入
+		s->next->last = s;
+		p->next=s;
+	}
+	return true;
+}
+
 // 第一题
 /* 设计一个递归算法, 删除不带头节点, 并释放其空间, 
  假设值为x的节点不唯一 */
@@ -94,6 +170,17 @@ bool DeleteNode(LinkList &L,bool log){
 		// 无下一个节点
 		if(log) printf("free - %d\n",L->data);
 		free(L);
+	}
+	return true;
+}
+
+// 删除循环双链表
+bool RDDelete(RDLinkList &L){
+	RDLNode *s;
+	while(L->next!=L){
+		s = L->next;
+		L->next = s->next;
+		free(s);
 	}
 	return true;
 }
@@ -617,6 +704,47 @@ bool MergeSameToA(LinkList &A, LinkList B){
 	}
 	return true;
 }
+
+// 第16题
+/* 两个整数序列A=a1,a2,a3...,am. B=b1,b2,...,bn 已经存入两个单链表中,
+ 设计一个算法,判断序列B是否是A的连续子序列.*/
+bool IsChild(LinkList A, LinkList B){
+	if(A->next==NULL || B->next==NULL)
+		return false;
+	LNode *p = A;
+	LNode *q = B;
+	while(p->next!=NULL && q->next!=NULL){
+		if(p->next->data == q->next->data)
+			q = q->next;
+		else
+			q = B;
+		p = p->next;
+	}
+	if(q->next==NULL)
+		return true;
+	else
+		return false;
+}
+
+// 第17题
+/* 设计一个算法用于判断带头节点的循环双链表是否对称 */
+bool IsSymmetry(RDLinkList L){
+	// 1 2 3 4 5 4 3 2 1
+	// 1 2 3 4 5 5 4 3 2 1
+	RDLNode *p=L,*q=L;
+	while(p->next!=L){
+		if(p->next->data != q->last->data)
+			return false;
+		p = p->next;
+		q = q->last;
+	}
+	return true;
+}
+
+// 第18题
+/* 两个循环单链表, 链表透支真难分别为h1,h2, 编写函数将链表2连接到链表h1之后, 
+ 要求连接后的链表人保持循环链表的形式 */
+
 int main(){
 
 	// 第一题
@@ -805,6 +933,44 @@ int main(){
 	DeleteNode(L15_2,false);
 
 	// 第16题
+	printf("\n\n第16题\n");
+	LinkList L16_1;
+	InitListNH(L16_1);
+	GenerateList2(L16_1,1,16);
+	PrintList(L16_1);
+	LinkList L16_2;
+	InitListNH(L16_2);
+	GenerateList2(L16_2,3,10);
+	PrintList(L16_2);
+	printf("Is child? - %d\n",IsChild(L16_1,L16_2));
+	DeleteNode(L16_1,false);
+	DeleteNode(L16_2,false);
+
+	// 第17题
+	printf("\n\n第17题\n");
+	RDLinkList L17;
+	RDInitListH(L17);
+	RDGenerateList(L17,1,6); // 1-5
+	RDGenerateList2(L17,5,0); // 5-1
+	RDPrintList(L17); // 5 4 3 2 1 1 2 3 4 5
+	printf("Is Symmetry? - %d\n",IsSymmetry(L17));
+	RDDelete(L17);
+	RDLinkList L17_2;
+	RDInitListH(L17_2);
+	RDGenerateList(L17_2,1,6); // 1-5
+	RDGenerateList2(L17_2,5,1); // 5-2
+	RDPrintList(L17_2); // 5 4 3 2 1 2 3 4 5
+	printf("Is Symmetry? - %d\n",IsSymmetry(L17_2));
+	RDDelete(L17_2);
+	RDLinkList L17_3;
+	RDInitListH(L17_3);
+	RDGenerateList(L17_3,1,6); // 1-5
+	RDGenerateList2(L17_3,5,2); // 5-3
+	RDPrintList(L17_3); // 5 4 3 1 2 3 4 5
+	printf("Is Symmetry? - %d\n",IsSymmetry(L17_3));
+	RDDelete(L17_3);
+
+
 	return 0;
 }
 
