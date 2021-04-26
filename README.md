@@ -60,16 +60,16 @@ __改查__  - 顺序表按位查找O(1),安置查找如果顺序表元素无序O
 ## 栈与队列
 ### 栈与队列文件夹中包含下面内容 
 
-|                   |栈|
-|:-|:-:|
-|                 |顺序栈|
-|Define           |√    |
-|InitStack(&S)    |     |
-|DestroyStack(&S) |
-|Push(&S,x)       |
-|Pop(&S)          |
-|GetTop(S,&x)     |
-|Empty(S)         |
+|                   |栈||
+|:-|:-:|:-:|
+|                 |顺序栈(数组)|共享栈(数组)|
+|Define           |√         |√          |
+|InitStack(&S)    |√         |√          |
+|DestroyStack(&S) |-         |-          |
+|Push(&S,x)       |√         |-          |
+|Pop(&S)          |√         |-          |
+|GetTop(S,&x)     |√         |-          |
+|Empty(S)         |√         |-          |
 
 
 __√__: 可以实现.   
@@ -78,4 +78,7 @@ __-__: 没有对应函数, 或尚未写出该函数.
 
 ### 笔记总结
 #### 栈的定义
-只允许在一端进行插入或删除的线性表; 栈顶, 栈底, 空栈.  
+1. 只允许在一端进行插入或删除的线性表; 栈顶, 栈底, 空栈.  
+2. 基本操作: 创,增,删,查,判空,判满.
+3. n个元素进栈, 出栈的种类<img src="http://chart.googleapis.com/chart?cht=tx&chl= \frac{C_{2n}^{n}}{n+1}" style="border:none;">
+<img src="http://www.forkosh.com/mathtex.cgi? \frac{C_{2n}^{n}}{n+1}">
