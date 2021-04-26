@@ -999,8 +999,237 @@ int LocateInverseK(LinkList L,int k){
 }
 
 // 第22题
-/*  */
+/* 假定采用带头节点的单链表保存单词, 当两个单词由相同后缀时,
+ 可共享相同后缀的储存空间, 例如“loading”和“being” .
+ 设str1和str2分指向两个单词所在单链表的头节点. 设计一个尽量高效的算法,
+ 找出str1和str2所指向的两个链表共同后缀的起始位置(例如上边i的位置)*/
+// L1和L2是已经合并完的, 题目让找出合并点
+typedef struct LNode22
+{
+	char data;
+	struct LNode22* next; 
+}LNode22,*LinkList22;
 
+bool GenerateList22(LinkList22 &L1,LinkList22 &L2){
+	// L1 - leading
+	L1 = (LNode22*)malloc(sizeof(LNode22));
+	L1->next = (LNode22*)malloc(sizeof(LNode22));
+	L1->next->data = 'l';
+	L1->next->next = (LNode22*)malloc(sizeof(LNode22));
+	L1->next->next->data = 'e';
+	L1->next->next->next = (LNode22*)malloc(sizeof(LNode22));
+	L1->next->next->next->data = 'a';
+	L1->next->next->next->next = (LNode22*)malloc(sizeof(LNode22));
+	L1->next->next->next->next->data = 'd';
+	L1->next->next->next->next->next = (LNode22*)malloc(sizeof(LNode22));
+	L1->next->next->next->next->next->data = 'i';
+	L1->next->next->next->next->next->next = (LNode22*)malloc(sizeof(LNode22));
+	L1->next->next->next->next->next->next->data = 'n';
+	L1->next->next->next->next->next->next->next = (LNode22*)malloc(sizeof(LNode22));
+	L1->next->next->next->next->next->next->next->data = 'g';
+	L1->next->next->next->next->next->next->next->next = NULL;
+
+	// L2 - learning
+	L2 = (LNode22*)malloc(sizeof(LNode22));
+	L2->next = (LNode22*)malloc(sizeof(LNode22));
+	L2->next->data = 'l';
+	L2->next->next = (LNode22*)malloc(sizeof(LNode22));
+	L2->next->next->data = 'e';
+	L2->next->next->next = (LNode22*)malloc(sizeof(LNode22));
+	L2->next->next->next->data = 'a';
+	L2->next->next->next->next = (LNode22*)malloc(sizeof(LNode22));
+	L2->next->next->next->next->data = 'r';
+	L2->next->next->next->next->next = (LNode22*)malloc(sizeof(LNode22));
+	L2->next->next->next->next->next->data = 'n';
+	L2->next->next->next->next->next->next = L1->next->next->next->next->next;
+
+	return true;
+}
+
+void PrintList22(LinkList22 L){
+	LNode22 *p = L;
+	while(p->next!=NULL){
+		printf("%c",p->next->data);
+		p = p->next;
+	}
+}
+
+int Length22(LinkList22 L){
+	int length = 0;
+	LNode22 *p = L;
+	while(p->next!=NULL){
+		length++;
+		p = p->next;
+	}
+	return length;
+}
+
+int FindSuffixSubscript(LinkList22 L1, LinkList22 L2){
+	int sub=0;
+	int len1 = Length22(L1);
+	int len2 = Length22(L2);
+	LNode22 *p = L1;
+	LNode22 *q = L2;
+	// 使两个表对齐
+	if(len1>len2)
+		for(int i=0;i<len1 - len2;i++,sub++)
+			p = p->next;
+	else
+		for(int i=0;i<len2-len1;i++,sub++)
+			q = q->next;
+	// 找到公共节点
+	while(p->next!=NULL){
+		if(p->next==q->next){
+			break;
+		}
+		sub++;
+		p = p->next;
+		q = q->next;
+	}
+	return sub;
+}
+
+// 第23题(2005统考真题)
+/* 用单链表保存m个整数, 节点的结构为[data][next],|data|≤n,
+ (n为正整数),先要求设计一个时间复杂度尽可能高效的算法, 对于链表中data
+ 的绝对值相等的节点, 仅保留第一次出现的节点而删除其余绝对值相等的节点.
+ 例如:[head,21,-15,15,-15,-7,15]->[head,21,-15,-7]*/
+int abs(int x){
+	return x*(x>0?1:-1);
+}
+// 我的算法
+// 时间复杂度为n^2
+bool DeleteAllDouble1(LinkList &L){
+	LNode *s,*p=L,*q,*d,*a;
+	int flag=0;
+	s = (LNode*)malloc(sizeof(LNode));
+	if(s==NULL)return false;
+	s->next = NULL;
+	while(p->next!=NULL){
+		// 寻找相等
+		for(q=s,flag=0;q->next!=NULL;q=q->next)
+			if(abs(p->next->data)==q->next->data){
+				flag=1;
+				break;
+			}
+		// 找到相等的情况 - 删除
+		if(flag){
+			d = p->next;
+			p->next = d->next;
+			free(d);
+		}else{
+		// 没找到相等的情况 - 跳过
+			a = (LNode*)malloc(sizeof(LNode));
+			if(a==NULL)return false;
+			a->next = s->next;
+			a->data = abs(p->next->data);
+			s->next = a;
+			p = p->next;
+		}
+	}
+	return true;
+}
+
+// 答案算法 时间复杂度 - O(n)
+bool DeleteAllDouble2(LinkList &L, int n){
+	LNode *p=L,*d;
+	int s[n+1];
+	for(int i=0; i<n+1; i++){
+		s[i]=0;
+	}
+	while(p->next!=NULL){
+		// 找到相等的情况 - 删除
+		if(s[abs(p->next->data)]){
+			d = p->next;
+			p->next = d->next;
+			free(d);
+		}else{
+		// 没找到相等的情况 - 跳过
+			s[abs(p->next->data)]=1;
+			p = p->next;
+		}
+	}
+	return true;
+}
+
+// 第24题
+/* 设计一个算法, 判断一个链表是否有环, 如果有,找出换的入口点并返回, 否则返回NULL*/
+LNode* HasCircle(LinkList L){
+	LNode *p=L->next,*q=L;
+	while(p->next!=q){
+		// 找到了界限
+		if(p->next==NULL)
+			return NULL;
+		// 总有一天可以转过去
+		p = p->next;
+	}
+	return p;
+}
+
+// 第25题
+/* 带头节点的单链表L, 设计空间复杂度O(1)的算法, 重排L的各个节点, 得到线性表L‘,
+ (a1, an, a2, an-1, a3,...) */
+bool ReSorting(LinkList &L){
+	if(L->next==NULL)
+		return false;
+	// 1 2 3 4 5 6 7 8 9 10
+	// 1 3 5 7 9
+	// 10 8 6 4 2
+	// 1 10 2 9 3 8 4 7 5 6
+	// 构建新链表
+	LinkList L1 = (LNode*)malloc(sizeof(LNode));
+	LinkList L2 = (LNode*)malloc(sizeof(LNode));
+	if(L1==NULL || L2==NULL)return false;
+	L1->next=NULL;
+	L2->next=NULL;
+	LNode *p = L, *l1=L1, *l2=L2,*s;
+	int count = 1;
+	while(p->next!=NULL){
+		s = p->next;
+		p->next = s->next;
+		if(count%2==1){
+			// 奇数 - 后插法
+			l1->next=s;
+			s->next = NULL;
+			l1 = l1->next;
+		}else{
+			// 偶数 - 前插法
+			s->next = l2->next;
+			l2->next=s;
+		}
+		count++;
+	}
+	// for test
+	PrintList(L1);
+	PrintList(L2);
+	// 合并
+	p = L;
+	while(L2->next!=NULL){
+		// 一奇一偶的插入
+		s = L1->next;
+		L1->next = s->next;
+		s->next = p->next;
+		p->next = s;
+		p = p->next;
+
+		s = L2->next;
+		L2->next = s->next;
+		s->next = p->next;
+		p->next = s;
+		p = p->next;
+	}
+	if(L1->next!=NULL){
+		s = L1->next;
+		L1->next = s->next;
+		s->next = p->next;
+		p->next = s;
+		p = p->next;
+	}
+	free(L1);
+	free(L2);
+
+	return true;
+}
 int main(){
 
 	// 第一题
@@ -1274,7 +1503,62 @@ int main(){
 	LocateInverseK(L21,3);
 	DeleteNode(L21,false);
 
+	// 第22题
+	printf("\n\n第22题\n");
+	LinkList22 L22_1,L22_2;
+	GenerateList22(L22_1,L22_2);
+	printf("第一个单词:");PrintList22(L22_1);
+	printf("\n第二个单词:");PrintList22(L22_2);printf("\n");
+	printf("公共节点位置是: %d (相对于第一个单词)\n",
+		FindSuffixSubscript(L22_1,L22_2));
+
+	// 第23题
+	printf("\n\n第23题\n");
+	LinkList L23;
+	InitListNH(L23);
+	GenerateList(L23);
+	L23->next->next->data = L23->next->data;
+	L23->next->next->next->next->data = -L23->next->data;
+	PrintList(L23);
+	//DeleteAllDouble1(L23); // O(n^2)
+	DeleteAllDouble2(L23,11); // O(n)
+	PrintList(L23);
+	DeleteNode(L23,false);
+
+	// 第24题
+	printf("\n\n第24题\n");
+	LinkList L24_1;
+	InitListNH(L24_1);
+	GenerateList2(L24_1,1,10);
+	PrintList(L24_1);
+	printf("是否有环: %d\n",HasCircle(L24_1)!=NULL);
+	DeleteNode(L24_1,false);
+	LinkList L24_2;
+	InitListNH(L24_2);
+	GenerateList2(L24_2,1,10);
+	PrintList(L24_2);
+	// head 1    2     3     4    5     6      7     8      9
+	L24_2->next->next->next->next->next->next->next->next->next->next=L24_2;
+	printf("是否有环: %d\n",HasCircle(L24_2)!=NULL);
+	L24_2->next->next->next->next->next->next->next->next->next->next=NULL;
+	DeleteNode(L24_2,false);
+
+	// 第25题
+	printf("\n\n第25题\n");
+	LinkList L25;
+	InitListNH(L25);
+	GenerateList2(L25,1,10);
+	PrintList(L25);
+	ReSorting(L25);
+	PrintList(L25);
+	DeleteNode(L25,false);
+	LinkList L25_2;
+	InitListNH(L25_2);
+	GenerateList2(L25_2,1,11);
+	PrintList(L25_2);
+	ReSorting(L25_2);
+	PrintList(L25_2);
+	DeleteNode(L25_2,false);
+
 	return 0;
 }
-
-
