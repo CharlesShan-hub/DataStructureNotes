@@ -133,15 +133,19 @@ double CalculatePoland(char e[]){
 }
 
 // 转换成后缀表达式
-double ToInversePoland(char e[]){
-	double s;
-	return s;
+char* ToInversePoland(char e[]){
+	/*
+	1. 遇到操作数 ->加入后缀表达式
+	2. 遇到‘(’入栈, 遇到‘)’依次弹出站内运算符加入后缀表达式直到‘(’. (注意, 括号不入后缀表达式)
+	3. 遇到运算符.  依次弹出运算及高于或等于当前运算符的所有运算符, 直到括号或栈空为止. 然后把当前运算符入栈. 
+	4. 处理完所有字符后, 把栈中运算符依次弹出. 
+	*/
+	return e;
 }
 
 // 转换成前缀表达式
-double ToPoland(char e[]){
-	double s;
-	return s;
+char* ToPoland(char e[]){
+	return e;
 }
 
 int main(){
