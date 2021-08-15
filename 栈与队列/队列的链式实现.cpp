@@ -150,6 +150,7 @@ int main(){
 	printf("是否为空:%d\n",EmptyLinkQueue2(Q2));
 	printf("插入 1 ");EnQueue2(Q2,1);
 	printf("插入 2 ");EnQueue2(Q2,2);
+	DeQueue2(Q2,x);printf("出栈 %d ",x);
 	printf("插入 3 ");EnQueue2(Q2,3);
 	printf("插入 4 ");EnQueue2(Q2,4);
 	printf("\n是否为空:%d\n",EmptyLinkQueue2(Q2));
