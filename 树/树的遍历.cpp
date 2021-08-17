@@ -127,12 +127,12 @@ void DeleteTree(BiTree &T){
 }
 
 BiTNode* NewNode(int data){
-	BiTNode *T = (BiTNode*)malloc(sizeof(BiTree));
+	BiTNode *T = (BiTNode*)malloc(sizeof(BiTNode));
 	if(T==NULL){
-		printf("Memory run out!");
+		//printf("Memory run out!");
 		return NULL;
 	}else{
-		printf("Put [%d] at %p\n",data,T);
+		//printf("Put [%d] at %p\n",data,T);
 	}
 	T->data = data;
 	T->lchild = NULL;
@@ -174,12 +174,10 @@ BiTree TestInit(){
 	 *   G-7
 	 */
 	return T;
-
 }
+
 int main(){
-	printf("不知道为啥不能在Mac里跑, 会有Segmentation fault: "
-		"11, 所以我就在win里边跑完放的.exe\n");
-	printf("构造数:\n");
+	//printf("构造树:\n");
 	BiTree T = TestInit();
 	// 先序遍历
 	printf("\n先序遍历:");
@@ -201,7 +199,7 @@ int main(){
 	DeleteTree(T);
 	printf("\n");
 	
-	system("pause");
+	//system("pause");
 	return 0;
 
 }
