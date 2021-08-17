@@ -192,3 +192,14 @@ __稀疏矩阵__
 方法二: 十字链表法
 ![十字链表法](./栈与队列/resources/十字链表法.png)
 
+### 图的基本操作
+* Adjacent(G,x,y):判断是否存在边<x,y>
+* Neighbors(G,x):撇除图G中与结点x邻接的边
+* InsertVertex(G,x):插入x
+* DeleteVertex(G,x):删除x
+* AddEdge(G,x,y):插入连接
+* RemoveEdge(G,x,y):删除连接
+* FirstNeighbor(G,x):x的第一个邻接点,不存在返回-1
+* NextNeighbor(G,x,y):x的下一个邻接点(假设y是x的邻接点),如果y是最后一个,返回-1
+* GetEdgeValue(G,x,y):获取<x,y>边的权值
+* SetEdgeValue(G,x,y,v):设置G中边<x,y>边的权值为v
