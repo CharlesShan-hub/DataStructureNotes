@@ -1,20 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-
-/**
- * Adjacent(G,x,y):判断是否存在边<x,y>
- * Neighbors(G,x):列出图G中与结点x邻接的边
- * InsertVertex(G,x):插入x
- * DeleteVertex(G,x):删除x
- * AddEdge(G,x,y):插入连接
- * RemoveEdge(G,x,y):删除连接
- * FirstNeighbor(G,x):x的第一个邻接点,不存在返回-1
- * NextNeighbor(G,x,y):x的下一个邻接点(假设y是x的邻接点),如果y是最后一个,返回-1
- * GetEdgeValue(G,x,y):获取<x,y>边的权值
- * SetEdgeValue(G,x,y,v):设置G中边<x,y>边的权值为v
- */
-
 #define MaxVerNum 50
 #define NONE 0
 typedef struct ArcNode
@@ -59,6 +42,7 @@ bool AddNode(AdjList &G,int data){
         count++;
     }
     G[count].data=data;
+    G[0].data++;
     return true;
 }
 
@@ -130,17 +114,17 @@ void TestInit(AdjList &G){
         " 5   6 - 7 - 8\n");
 }
 
-int main(int argc, char const *argv[])
-{
-    printf("构建测试图:\n");
-    Graph G;
-    TestInit(G);
+typedef double FloydCost[MaxVerNum][MaxVerNum];
 
-    printf("\n%d\n",FirstNeighbor(G,5));
-    printf("%d\n",FirstNeighbor(G,3));
-    printf("%d\n",NextNeighbor(G,3,4));
-    printf("%d\n",NextNeighbor(G,3,7));
-    printf("%d\n",NextNeighbor(G,3,6));
-
-    return 0;
+void GetWeight(Graph G,FloydCost &Cost){
+    ArcNode *p = NULL;
+    for(int i=1,j=1;i<MaxVerNum;i++){
+        if(G[i].data!=NONE){
+            j=1;
+            for(p=G[i].first;p!=NULL;p=p->next){
+                Cost[i][j]=p->value;
+                j++;
+            }
+        }
+    }
 }

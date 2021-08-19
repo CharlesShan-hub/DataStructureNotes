@@ -1,21 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include "queue.h"
-
-/**
- * Adjacent(G,x,y):判断是否存在边<x,y>
- * Neighbors(G,x):列出图G中与结点x邻接的边
- * InsertVertex(G,x):插入x
- * DeleteVertex(G,x):删除x
- * AddEdge(G,x,y):插入连接
- * RemoveEdge(G,x,y):删除连接
- * FirstNeighbor(G,x):x的第一个邻接点,不存在返回-1
- * NextNeighbor(G,x,y):x的下一个邻接点(假设y是x的邻接点),如果y是最后一个,返回-1
- * GetEdgeValue(G,x,y):获取<x,y>边的权值
- * SetEdgeValue(G,x,y,v):设置G中边<x,y>边的权值为v
- */
-
 #define MaxVerNum 50
 //#define INFINITY -1
 #define NONE 0
@@ -78,15 +60,33 @@ void PrintGraph(Graph G){
 
 int FirstNeighbor(Graph G,int v){
 	for(int i=1;i<G.vexnum+1;i++)
-		if(G.Edge[v][i]==true)
+		if(G.Edge[v][i]!=0)
 			return i;
 	return -1;
 }
 
 int NextNeighbor(Graph G,int v, int h){
 	for(int i=h+1;i<G.vexnum+1;i++)
-		if(G.Edge[v][i]==true)
+		if(G.Edge[v][i]!=0)
 			return i;
+	return -1;
+}
+
+int FirstNeighborValue(Graph G,int v,int &value){
+	for(int i=1;i<G.vexnum+1;i++)
+		if(G.Edge[v][i]!=0){
+			value = G.Edge[v][i];
+			return i;
+		}
+	return -1;
+}
+
+int NextNeighborValue(Graph G,int v, int h,int &value){
+	for(int i=h+1;i<G.vexnum+1;i++)
+		if(G.Edge[v][i]!=0){
+			value = G.Edge[v][i];
+			return i;
+		}
 	return -1;
 }
 
@@ -125,12 +125,10 @@ void TestInit(Graph &G){
 		" 5   6 - 7 - 8\n");
 }
 
+typedef double FloydCost[MaxVerNum][MaxVerNum];
 
-int main(int argc, char const *argv[])
-{
-	printf("构建测试图:\n");
-	Graph G;
-	TestInit(G);
-
-	return 0;
+void GetWeight(Graph G,FloydCost &Cost){
+	for(int i=1;i<GetVexnum(G)+1;i++)
+		for(int j=1;j<GetVexnum(G)+1;j++)
+			Cost[i][j]=G.Edge[i][j];
 }
