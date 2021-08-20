@@ -81,6 +81,20 @@ int GetVexnum(AdjList G){
     return G[0].data;
 }
 
+int GetIndegree(Graph G,int n){
+    if(n>GetVexnum(G))
+        return -1;
+    int count=0;
+    for(int i=1;i<MaxVerNum;i++){
+        if(i==n)
+            continue;
+        for(int p=FirstNeighbor(G,i);p!=-1;p=NextNeighbor(G,i,p))
+            if(p==n)
+                count++;
+    }
+    return count;
+}
+
 void InitGraph(AdjList &G){
     for(int i=0;i<MaxVerNum;i++){
         G[i].data = NONE;
@@ -116,15 +130,29 @@ void TestInit(AdjList &G){
 
 typedef double FloydCost[MaxVerNum][MaxVerNum];
 
-void GetWeight(Graph G,FloydCost &Cost){
+void GetFloWeight(Graph G,FloydCost &Cost){
     ArcNode *p = NULL;
     for(int i=1,j=1;i<MaxVerNum;i++){
         if(G[i].data!=NONE){
             j=1;
             for(p=G[i].first;p!=NULL;p=p->next){
-                Cost[i][j]=p->value;
+                Cost[i][p->adjvex]=p->value;
                 j++;
             }
         }
+    }
+}
+
+typedef struct DijArray
+{
+    bool final[MaxVerNum];  // 是否找到最短路径
+    double dist[MaxVerNum]; // 最短路径长度
+    int path[MaxVerNum];    // 路径前驱(-1表示未改变)
+}DijArray;
+
+void GetDijWeight(Graph G,DijArray &Array,int i){
+    for(ArcNode *p=G[i].first;p!=NULL;p=p->next){
+        Array.dist[p->adjvex]=p->value;
+        Array.path[p->adjvex]=0;
     }
 }
