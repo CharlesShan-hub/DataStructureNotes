@@ -55,6 +55,8 @@ void FastSort(int A[],int low,int high,int level,int n){//level和n是为了prin
 		printf("[%d] %d-%d-%d\n",level++,low,pivotpos,high);
 		ArrayPrint(A,n,pivotpos);
 		FastSort(A,low,pivotpos-1,level,n);
+		printf("[%d] %d-%d-%d\n",level++,low,pivotpos,high);
+		ArrayPrint(A,n,pivotpos);
 		FastSort(A,pivotpos+1,high,level,n);
 	}else if(low==high){
 		ArrayPrint(A,n,low);
@@ -74,8 +76,8 @@ int main(){
 	FastSort(B,0,7,1,8);
 	
 	printf("\n快速排序\n");
-	int C[] = {3,4,1,2,5};
-	ArrayPrint(C,5,-1);
-	FastSort(C,0,4,1,5);
+	int C[] = {5,4,9,8,2,7,10,1,3};
+	ArrayPrint(C,9,-1);
+	FastSort(C,0,8,1,9);
 	return 0;
 }
