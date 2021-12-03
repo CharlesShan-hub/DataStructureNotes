@@ -65,8 +65,8 @@ void BFS_MIN_Distance(Graph G,int u,BFSArray &array){
 /*
 typedef struct DijArray
 {
-	bool final[MaxVerNum];  // 是否找到最短路径
-	double dist[MaxVerNum]; // 最短路径长度
+	bool final[MaxVerNum];  // 是否找到最短路径(默认false)
+	double dist[MaxVerNum]; // 最短路径长度(默认INFINITY-65536)
 	int path[MaxVerNum];    // 路径前驱(-1表示未改变)
 }DijArray;
 */
@@ -111,10 +111,12 @@ void DijPrintf(DijArray array,int length, int tag){
 }
 
 void dijkstra(Graph G,int start,DijArray &array){
+	// start是位序,从1开始
+
 	// 初始
-	array.final[start] = true;
-	array.dist[start] = 0;
-	array.path[start] = -1;
+	array.final[start] = true;  // 是否找到最短路径
+	array.dist[start] = 0;      // 最短路径长度
+	array.path[start] = -1;     // 路径前驱(-1表示未改变)
 	DijPrintf(array,GetVexnum(G),0);
 	// 进行n-1次循环
 	double min_dist = INFINITY; // 用来寻找最小值点(值)
@@ -134,7 +136,7 @@ void dijkstra(Graph G,int start,DijArray &array){
 			}
 		}
 		// 标记最小未标记点
-		printf("->%d\n",min_dist_id);
+		printf(" ->%d\n",min_dist_id);
 		array.final[min_dist_id] = true;
 		if(array.dist[min_dist_id]+array.dist[last_min_id]<array.dist[min_dist_id])
 			array.dist[min_dist_id] = array.dist[min_dist_id]+array.dist[last_min_id];
@@ -243,8 +245,8 @@ void BFSTestInit1(Graph &G,BFSArray &array){
 
 void DijTestInit1(Graph &G,DijArray &array,int i){
 	DijTestInit(G,array);
-	for(int i=1;i<6;i++)
-		AddNode(G,i);
+	for(int j=1;j<6;j++)
+		AddNode(G,j);
 	AddEdgeDirected(G,1,2,10);
 	AddEdgeDirected(G,1,5,5);
 	AddEdgeDirected(G,2,3,1);
@@ -256,6 +258,8 @@ void DijTestInit1(Graph &G,DijArray &array,int i){
 	AddEdgeDirected(G,5,3,9);
 	AddEdgeDirected(G,5,4,2);
 	PrintGraph(G);
+	printf("\n");
+	DijPrintf(array,GetVexnum(G),0);
 	GetDijWeight(G,array,i);
 }
 
@@ -348,10 +352,10 @@ int main(){
 
 		printf("构建测试图2_1:\n\n");
 		Graph G2;
+		DijPrintf(dij_array,GetVexnum(G2),0);
 		DijTestInit1(G2,dij_array,1);
-		printf("\nDijkstra算法(1):\n");
+		printf("\nDijkstra算法(开始节点名称—1):\n");
 		dijkstra(G2,1,dij_array);
-		//DijPrintf(dij_array,GetVexnum(G2),0);
 	}
 
 
@@ -378,6 +382,6 @@ int main(){
 		printf("\nfloyd算法:\n");
 		floyd(G3_3,Cost,Path);
 	}
-
+	getchar();
 	return 0;
 }

@@ -14,7 +14,7 @@
 typedef struct LNode
 {
 	int data;
-	struct LNode* next;
+	LNode* next;
 }LNode, *LinkStack;
 
 // 初始化

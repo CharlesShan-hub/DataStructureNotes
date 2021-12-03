@@ -1,10 +1,11 @@
 #define MaxVerNum 50
 //#define INFINITY -1
+#define INFINITY 65536
 #define NONE 0
 typedef struct
 {
 	int Vex[MaxVerNum];                // 顶点
-	int Edge[MaxVerNum][MaxVerNum]; // 邻接矩阵
+	int Edge[MaxVerNum][MaxVerNum];    // 邻接矩阵
 	int vexnum,arcnum;                 // 图当前顶点数和边数/弧数
 }Graph;
 
@@ -14,15 +15,15 @@ void InitGraph(Graph &G){
 	for(int i=0;i<MaxVerNum;i++){
 		G.Vex[i]=0;
 		for(int j=0;j<MaxVerNum;j++)
-			G.Edge[i][j] = 0;
+			G.Edge[i][j] = INFINITY;
 	}
 }
 
 void DeleteNode(Graph &G,int x){
 	G.Vex[x] = 0;
 	for(int i=1;i<MaxVerNum;i++){
-		G.Edge[x][i] = 0;
-		G.Edge[i][x] = 0;
+		G.Edge[x][i] = INFINITY;
+		G.Edge[i][x] = INFINITY;
 	}
 	G.vexnum--;
 }
@@ -83,7 +84,7 @@ void PrintGraph(Graph G){
 			if((i+tempr)==(j+templ))
 				printf("  \\");
 			else if(G.Edge[i+tempr][j+templ]==INFINITY)
-				printf(" .");
+				printf("  .");
 			else
 				printf(" %2d",G.Edge[i+tempr][j+templ]);
 				
@@ -194,6 +195,6 @@ void GetDijWeight(Graph G,DijArray &Array,int n){
     for(int i=1;i<GetVexnum(G)+1;i++)
     	if(G.Edge[n][i]!=0){
     		Array.dist[i]=G.Edge[n][i];
-    		Array.path[i]=0;
+    		Array.path[i]=n;
     	}
 }

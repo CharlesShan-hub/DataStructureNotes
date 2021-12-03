@@ -1,5 +1,6 @@
 #define MaxVerNum 50
 #define NONE 0
+#define INFINITY 65536
 typedef struct ArcNode
 {
     int adjvex;           // 边/弧指向哪个节点
@@ -67,7 +68,10 @@ void PrintGraph(AdjList G){
     ArcNode *p = NULL;
     for(int i=1;i<MaxVerNum;i++){
         if(G[i].data!=NONE){
-            printf(" %d ",G[i].data);
+            if(G[i].data==INFINITY)
+                printf(" x ");
+            else
+                printf(" %d ",G[i].data);
             if(G[i].first!=NULL)
                 printf("-> ");
             for(p=G[i].first;p!=NULL;p=p->next)
@@ -153,6 +157,6 @@ typedef struct DijArray
 void GetDijWeight(Graph G,DijArray &Array,int i){
     for(ArcNode *p=G[i].first;p!=NULL;p=p->next){
         Array.dist[p->adjvex]=p->value;
-        Array.path[p->adjvex]=0;
+        Array.path[p->adjvex]=i;
     }
 }
