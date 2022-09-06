@@ -43,7 +43,8 @@ bool StackEmpty(SqStack S){
 bool Push(SqStack &S, int x){
 	if(S.top==MaxSize-1)
 		return false;
-	return S.data[++S.top] = x;
+	S.data[++S.top] = x
+	return true;
 }
 */
 
@@ -51,7 +52,8 @@ bool Push(SqStack &S, int x){
 bool Push(SqStack &S, int x){
 	if(S.top==MaxSize)
 		return false;
-	return S.data[S.top++] = x;
+	S.data[S.top++] = x;
+	return true;
 }
 
 // 出栈 - 方案一:top指向最后一个原元素
@@ -59,7 +61,8 @@ bool Push(SqStack &S, int x){
 bool Pop(SqStack &S, int &x){
 	if(S.top==-1)
 		return false;
-	return x = S.data[S.top--];
+	x = S.data[S.top--];
+	return true;
 }
 */
 
@@ -67,7 +70,8 @@ bool Pop(SqStack &S, int &x){
 bool Pop(SqStack &S, int &x){
 	if(S.top==0)
 		return false;
-	return x = S.data[--S.top];
+	x = S.data[--S.top];
+	return true;
 }
 
 // 读栈顶 - 方案一:top指向最后一个原元素
@@ -75,7 +79,8 @@ bool Pop(SqStack &S, int &x){
 bool GetTop(SqStack S, int &x){
 	if(S.top==-1)
 		return false;
-	return x = S.data[S.top];
+	x = S.data[S.top];
+	return true;
 }
 */
 
@@ -83,7 +88,8 @@ bool GetTop(SqStack S, int &x){
 bool GetTop(SqStack S, int &x){
 	if(S.top==-1)
 		return false;
-	return x = S.data[S.top];
+	x = S.data[S.top];
+	return true;
 }
 
 int main(){
@@ -106,14 +112,14 @@ int main(){
 	// 获取栈顶
 	int x;
 	GetTop(S,x);
-	printf("%d\n",x);
+	printf("%d\n",x); // -> 10
 	// 出栈
 	Pop(S,x);
 	printf("%d ",x);
 	Pop(S,x);
 	printf("%d ",x);
 	Pop(S,x);
-	printf("%d\n",x);
+	printf("%d\n",x); // -> 10 9 8
 
 	return 0;
 }
